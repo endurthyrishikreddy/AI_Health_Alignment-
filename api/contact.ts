@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
-import { validateContactRequest, checkRateLimit, getClientIp } from './utils/security';
+import { validateContactRequest, checkRateLimit, getClientIp } from './utils/security.js';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -40,8 +40,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // STRICT: Only allow POST requests - reject all others
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ 
-      error: 'Method not allowed - only POST requests are accepted' 
+    return res.status(405).json({
+      error: 'Method not allowed - only POST requests are accepted'
     });
   }
 
