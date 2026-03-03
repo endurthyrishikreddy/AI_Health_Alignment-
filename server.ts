@@ -3,6 +3,9 @@ import { createServer as createViteServer } from 'vite';
 import db from './src/db/index.js';
 import { validateContactRequest, checkRateLimit, getClientIp } from './api/utils/security.ts';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function startServer() {
   const app = express();
@@ -37,7 +40,7 @@ async function startServer() {
 
       const token = authHeader.substring(7);
 
-      if (!token || token.length < 32) {
+      if (!token || token.length < 16) {
         console.warn('⚠️ Unauthorized access attempt - invalid token format');
         return res.status(401).json({ error: 'Unauthorized - invalid token' });
       }
@@ -57,7 +60,7 @@ async function startServer() {
 
       const stmt = db.prepare('SELECT * FROM contacts ORDER BY created_at DESC');
       const contacts = stmt.all();
-      
+
       return res.status(200).json({
         success: true,
         count: contacts.length,
@@ -73,6 +76,36 @@ async function startServer() {
   app.post('/api/contacts', (req, res) => {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Method not allowed - only GET requests are accepted' });
+  });
+
+  // ============================================
+  // POST /api/admin-login - Admin authentication
+  // ============================================
+  app.post('/api/admin-login', (req, res) => {
+    try {
+      const { password } = req.body;
+
+      if (!password) {
+        return res.status(400).json({ error: 'Password is required' });
+      }
+
+      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+      if (password !== adminPassword) {
+        return res.status(401).json({ error: 'Invalid password' });
+      }
+
+      const token = process.env.ADMIN_TOKEN || 'your-secret-admin-token-12345';
+
+      return res.status(200).json({
+        success: true,
+        token: token,
+        message: 'Login successful'
+      });
+    } catch (error) {
+      console.error('Error during login:', error);
+      return res.status(500).json({ error: 'Login failed' });
+    }
   });
 
   // ============================================

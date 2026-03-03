@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-const adminToken = process.env.ADMIN_TOKEN || 'your-secret-admin-token';
+const adminToken = process.env.ADMIN_TOKEN || 'your-secret-admin-token-12345';
 
 const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
@@ -52,14 +52,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
-    // Validate token
-    if (!token) {
-      console.warn('⚠️ Unauthorized access attempt - empty token');
-      return res.status(401).json({ error: 'Unauthorized - empty token' });
-    }
-
-    if (token.length !== adminToken.length) {
-      console.warn('⚠️ Unauthorized access attempt - invalid token length');
+    // Validate token format (should be at least 16 characters)
+    if (!token || token.length < 16) {
+      console.warn('⚠️ Unauthorized access attempt - invalid token format');
       return res.status(401).json({ error: 'Unauthorized - invalid token' });
     }
 

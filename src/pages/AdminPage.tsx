@@ -54,7 +54,7 @@ export default function AdminPage() {
       setToken(data.token);
       setIsLoggedIn(true);
       setPassword('');
-      
+
       // Fetch contacts after login
       fetchContacts(data.token);
     } catch (err) {
@@ -80,7 +80,7 @@ export default function AdminPage() {
       }
 
       const data = await response.json();
-      setContacts(data);
+      setContacts(Array.isArray(data) ? data : (data.data || []));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load contacts');
     } finally {

@@ -21,7 +21,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Generate a simple token (in production, use JWT)
-    const token = process.env.ADMIN_TOKEN || 'your-secret-admin-token';
+    const token = process.env.ADMIN_TOKEN || 'your-secret-admin-token-12345';
 
     return res.status(200).json({
       success: true,
