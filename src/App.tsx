@@ -19,7 +19,9 @@ export default function App() {
   useEffect(() => {
     // Listen to hash changes
     const handleHashChange = () => {
-      const hash = window.location.hash.slice(1) || 'home';
+      let hash = window.location.hash.slice(1) || 'home';
+      // Remove leading slash if present (e.g., "/admin" -> "admin")
+      hash = hash.replace(/^\//, '');
       setCurrentPage(hash);
     };
 
