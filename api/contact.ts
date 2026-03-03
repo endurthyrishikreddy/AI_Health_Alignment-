@@ -5,6 +5,11 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
+console.log('Supabase Config:', {
+  url: supabaseUrl ? '✓ Set' : '✗ Missing',
+  anonKey: supabaseAnonKey ? '✓ Set' : '✗ Missing'
+});
+
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase environment variables');
 }
@@ -47,8 +52,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .select();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(500).json({ error: 'Failed to save contact information' });
+      console.error('Supabase error details:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
+      return res.status(500).json({ 
+        error: 'Failed to save contact information',
+        details: error.message 
+      });
     }
 
     console.log('Contact saved successfully:', data);
