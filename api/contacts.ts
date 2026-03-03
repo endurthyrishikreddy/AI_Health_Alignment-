@@ -31,8 +31,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // STRICT: Only allow GET requests - reject all others
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ 
-      error: 'Method not allowed - only GET requests are accepted' 
+    return res.status(405).json({
+      error: 'Method not allowed - only GET requests are accepted'
     });
   }
 
@@ -52,9 +52,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
-    // Validate token format (should be at least 32 characters)
-    if (!token || token.length < 32) {
-      console.warn('⚠️ Unauthorized access attempt - invalid token format');
+    // Validate token
+    if (!token) {
+      console.warn('⚠️ Unauthorized access attempt - empty token');
+      return res.status(401).json({ error: 'Unauthorized - empty token' });
+    }
+
+    if (token.length !== adminToken.length) {
+      console.warn('⚠️ Unauthorized access attempt - invalid token length');
       return res.status(401).json({ error: 'Unauthorized - invalid token' });
     }
 
