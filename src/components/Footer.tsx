@@ -1,10 +1,4 @@
-import { Lock } from 'lucide-react';
-
-interface FooterProps {
-  onAdminClick?: () => void;
-}
-
-export default function Footer({ onAdminClick }: FooterProps) {
+export default function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,18 +45,7 @@ export default function Footer({ onAdminClick }: FooterProps) {
         
         <div className="border-t border-slate-800 pt-8 text-sm text-center md:text-left flex flex-col md:flex-row justify-between items-center">
           <p>&copy; 2026 APOGEE AI MEDIA. All rights reserved.</p>
-          <div className="flex items-center gap-4 mt-2 md:mt-0">
-            <p>Designed for Veterans & Seniors</p>
-            {onAdminClick && (
-              <button 
-                onClick={onAdminClick}
-                className="text-slate-600 hover:text-slate-400 transition-colors p-1"
-                title="Admin Login"
-              >
-                <Lock className="w-3 h-3" />
-              </button>
-            )}
-          </div>
+          <p className="mt-2 md:mt-0">Designed for Veterans & Seniors</p>
         </div>
       </div>
     </footer>
