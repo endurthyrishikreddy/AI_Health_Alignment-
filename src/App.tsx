@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
+import VideoModal from './components/VideoModal';
 import Hero from './components/Hero';
 import Problem from './components/Problem';
 import Solution from './components/Solution';
@@ -15,6 +16,7 @@ import AdminPage from './pages/AdminPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   useEffect(() => {
     // Listen to hash changes
@@ -37,8 +39,9 @@ export default function App() {
 
   return (
     <div className="font-sans text-slate-900 bg-white selection:bg-sky-200 selection:text-sky-900">
-      <Navbar />
-      <Hero />
+      <Navbar onVideoClick={() => setIsVideoOpen(true)} />
+      <VideoModal isOpen={isVideoOpen} onClose={() => setIsVideoOpen(false)} />
+      <Hero onVideoClick={() => setIsVideoOpen(true)} />
       <Problem />
       <Solution />
       <HowItWorks />

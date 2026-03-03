@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+interface NavbarProps {
+  onVideoClick: () => void;
+}
 
 const navLinks = [
   { name: 'Problem', href: '#problem' },
@@ -12,7 +16,7 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onVideoClick }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -36,7 +40,7 @@ export default function Navbar() {
           </div>
           
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
               <a 
                 key={link.name} 
@@ -46,6 +50,13 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
+            <button
+              onClick={onVideoClick}
+              className="text-slate-300 hover:text-sky-400 transition-colors text-sm font-medium flex items-center gap-2"
+            >
+              <Play className="h-4 w-4" />
+              Watch Video
+            </button>
             <a 
               href="#contact" 
               className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -86,6 +97,16 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
+              <button
+                onClick={() => {
+                  onVideoClick();
+                  setIsOpen(false);
+                }}
+                className="w-full text-left px-3 py-3 text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-md flex items-center gap-2"
+              >
+                <Play className="h-4 w-4" />
+                Watch Video
+              </button>
               <a 
                 href="#contact"
                 onClick={() => setIsOpen(false)}

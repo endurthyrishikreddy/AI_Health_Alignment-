@@ -1,17 +1,32 @@
 import { motion } from 'motion/react';
-import { ArrowRight, FileText } from 'lucide-react';
+import { ArrowRight, FileText, Play } from 'lucide-react';
 
-export default function Hero() {
+interface HeroProps {
+  onVideoClick?: () => void;
+}
+
+export default function Hero({ onVideoClick }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-slate-900 overflow-hidden pt-20">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 z-0" />
-      
-      {/* Abstract Shapes */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
+      {/* Video Background - YouTube Embed */}
+      <div className="absolute inset-0 z-0">
+        <div className="relative w-full h-full">
+          <iframe
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://www.youtube.com/embed/Az55ZFl3Qvs?autoplay=1&mute=1&loop=1&playlist=Az55ZFl3Qvs&controls=0&modestbranding=1"
+            title="AI-Enabled Health Alignment Background Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            style={{
+              border: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+          {/* Dark overlay to make text readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-800/70 z-10" />
+        </div>
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,6 +54,13 @@ export default function Hero() {
               View How It Works
               <ArrowRight className="h-5 w-5" />
             </a>
+            <button
+              onClick={onVideoClick}
+              className="w-full sm:w-auto px-8 py-4 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 hover:text-sky-200 border border-sky-500/50 hover:border-sky-400 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+            >
+              <Play className="h-5 w-5" />
+              Watch Full Video
+            </button>
             <a 
               href="#" 
               className="w-full sm:w-auto px-8 py-4 bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-700 hover:border-sky-400 hover:text-sky-400 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
@@ -55,7 +77,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
       >
         <div className="w-6 h-10 border-2 border-slate-500 rounded-full flex justify-center p-1">
           <motion.div 
