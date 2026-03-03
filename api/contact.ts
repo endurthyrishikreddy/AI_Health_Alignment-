@@ -5,16 +5,18 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
-console.log('Supabase Config:', {
-  url: supabaseUrl ? '✓ Set' : '✗ Missing',
-  anonKey: supabaseAnonKey ? '✓ Set' : '✗ Missing'
-});
+console.log('=== SUPABASE CONFIG CHECK ===');
+console.log('SUPABASE_URL:', supabaseUrl ? '✓ Set' : '✗ MISSING');
+console.log('SUPABASE_ANON_KEY:', supabaseAnonKey ? '✓ Set' : '✗ MISSING');
+
+let supabase;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
+  console.error('❌ CRITICAL: Missing Supabase environment variables');
+} else {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+  console.log('✓ Supabase client initialized successfully');
 }
-
-const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow POST requests
@@ -22,37 +24,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check if Supabase is configured
+  if (!supabase) {
+    console.error('❌ Supabase client not initialized - missing env variables');
+    return res.status(500).json({ 
+      error: 'Server configuration error - Supabase not initialized',
+      details: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY'
+    });
+  }
+
   try {
     const { name, organization, role, email, message } = req.body;
 
+    console.log('📝 Form submission received:', { name, email, role });
+
     // Validate required fields
     if (!name || !email) {
+      console.warn('⚠️ Validation failed: Missing name or email');
       return res.status(400).json({ error: 'Name and email are required' });
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.warn('⚠️ Validation failed: Invalid email format');
       return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    // Insert into Supabase
+    // Insert into Supabase (DO NOT set created_at - let Supabase auto-generate it)
+    console.log('🔄 Attempting to insert contact into Supabase...');
     const { data, error } = await supabase
       .from('contacts')
       .insert([
         {
           name,
-          organization,
-          role,
+          organization: organization || null,
+          role: role || null,
           email,
-          message,
-          created_at: new Date().toISOString()
+          message: message || null
         }
       ])
       .select();
 
     if (error) {
-      console.error('Supabase error details:', {
+      console.error('❌ SUPABASE ERROR:', {
         message: error.message,
         code: error.code,
         details: error.details,
@@ -60,18 +75,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
       return res.status(500).json({ 
         error: 'Failed to save contact information',
-        details: error.message 
+        details: error.message,
+        code: error.code
       });
     }
 
-    console.log('Contact saved successfully:', data);
+    console.log('✓ Contact saved successfully:', data);
 
     return res.status(201).json({
       success: true,
       message: 'Contact information saved successfully. We will get back to you soon!'
     });
   } catch (error) {
-    console.error('Error processing contact:', error);
-    return res.status(500).json({ error: 'Failed to process contact information' });
+    console.error('❌ UNEXPECTED ERROR:', error);
+    return res.status(500).json({ 
+      error: 'Failed to process contact information',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
