@@ -1,4 +1,8 @@
 export default function Footer() {
+  const handleAdminLink = () => {
+    window.location.hash = '#admin';
+  };
+
   return (
     <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +49,16 @@ export default function Footer() {
         
         <div className="border-t border-slate-800 pt-8 text-sm text-center md:text-left flex flex-col md:flex-row justify-between items-center">
           <p>&copy; 2026 APOGEE AI MEDIA. All rights reserved.</p>
-          <p className="mt-2 md:mt-0">Designed for Veterans & Seniors</p>
+          <div className="mt-2 md:mt-0 flex items-center gap-4">
+            <p>Designed for Veterans & Seniors</p>
+            <button
+              onClick={handleAdminLink}
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors opacity-50 hover:opacity-100"
+              title="Admin Dashboard"
+            >
+              ⚙
+            </button>
+          </div>
         </div>
       </div>
     </footer>

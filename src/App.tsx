@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Problem from './components/Problem';
@@ -10,8 +11,28 @@ import Needs from './components/Needs';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import AdminPage from './pages/AdminPage';
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  useEffect(() => {
+    // Listen to hash changes
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) || 'home';
+      setCurrentPage(hash);
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  if (currentPage === 'admin') {
+    return <AdminPage />;
+  }
+
   return (
     <div className="font-sans text-slate-900 bg-white selection:bg-sky-200 selection:text-sky-900">
       <Navbar />
