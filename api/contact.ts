@@ -1,4 +1,15 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow POST requests
@@ -20,25 +31,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    // Log to console (check Vercel logs in dashboard)
-    console.log('Contact form submission:', {
-      name,
-      organization,
-      role,
-      email,
-      message,
-      timestamp: new Date().toISOString()
-    });
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from('contacts')
+      .insert([
+        {
+          name,
+          organization,
+          role,
+          email,
+          message,
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select();
 
-    // TODO: Implement persistent storage using one of:
-    // 1. Supabase PostgreSQL Database
-    // 2. MongoDB Atlas
-    // 3. Firebase Firestore
-    // 4. Send email notification
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to save contact information' });
+    }
+
+    console.log('Contact saved successfully:', data);
 
     return res.status(201).json({
       success: true,
-      message: 'Contact information received successfully. We will get back to you soon!'
+      message: 'Contact information saved successfully. We will get back to you soon!'
     });
   } catch (error) {
     console.error('Error processing contact:', error);
