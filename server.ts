@@ -4,6 +4,9 @@ import db from './src/db/index.js';
 import { validateContactRequest, checkRateLimit, getClientIp } from './api/utils/security.ts';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -16,13 +19,16 @@ async function startServer() {
   app.use(express.json({ limit: '10kb' }));
 
   // Security headers middleware
-  app.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    next();
+  app.use(helmet({
+    contentSecurityPolicy: false, // Vite needs inline scripts during dev
+  }));
+  app.use(cors());
+
+  // Rate Limiting for Admin Login
+  const adminLoginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 login requests per windowMs
+    message: { error: 'Too many login attempts from this IP, please try again after 15 minutes' }
   });
 
   // ============================================
@@ -81,7 +87,7 @@ async function startServer() {
   // ============================================
   // POST /api/admin-login - Admin authentication
   // ============================================
-  app.post('/api/admin-login', (req, res) => {
+  app.post('/api/admin-login', adminLoginLimiter, (req, res) => {
     try {
       const { password } = req.body;
 
@@ -91,7 +97,13 @@ async function startServer() {
 
       const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
-      if (password !== adminPassword) {
+      // Use constant-time comparison to prevent timing attacks
+      const passwordMatch = crypto.timingSafeEqual(
+        Buffer.alloc(Math.max(password.length, adminPassword.length), password),
+        Buffer.alloc(Math.max(password.length, adminPassword.length), adminPassword)
+      ) && password.length === adminPassword.length;
+
+      if (!passwordMatch) {
         return res.status(401).json({ error: 'Invalid password' });
       }
 

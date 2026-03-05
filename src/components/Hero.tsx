@@ -1,3 +1,4 @@
+
 import { motion } from 'motion/react';
 import { ArrowRight, FileText, Play } from 'lucide-react';
 
@@ -7,21 +8,10 @@ interface HeroProps {
 
 export default function Hero({ onVideoClick }: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-slate-900 overflow-hidden pt-20">
-      {/* Video Background - YouTube Embed */}
+    <section className="relative min-h-screen flex items-center justify-center bg-slate-900 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-900/40 via-slate-900 to-slate-900 overflow-hidden pt-20">
+      {/* Dark overlay to make text readable */}
       <div className="absolute inset-0 z-0">
         <div className="relative w-full h-full">
-          <iframe
-            className="absolute inset-0 w-full h-full object-cover"
-            src="https://www.youtube.com/embed/Az55ZFl3Qvs?autoplay=1&mute=1&loop=1&playlist=Az55ZFl3Qvs&controls=0&modestbranding=1"
-            title="AI-Enabled Health Alignment Background Video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            style={{
-              border: 'none',
-              pointerEvents: 'none',
-            }}
-          />
-          {/* Dark overlay to make text readable */}
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-800/70 z-10" />
         </div>
       </div>
@@ -45,10 +35,10 @@ export default function Hero({ onVideoClick }: HeroProps) {
             Turning routine lab results into clear, clinician-approved health roadmaps — improving quality of life, not just length of life.
             <br className="hidden md:block" /> Designed for veterans, seniors, and the clinicians who care for them.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href="#how-it-works" 
+            <a
+              href="#how-it-works"
               className="w-full sm:w-auto px-8 py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20"
             >
               View How It Works
@@ -61,26 +51,19 @@ export default function Hero({ onVideoClick }: HeroProps) {
               <Play className="h-5 w-5" />
               Watch Full Video
             </button>
-            <a 
-              href="#" 
-              className="w-full sm:w-auto px-8 py-4 bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-700 hover:border-sky-400 hover:text-sky-400 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
-            >
-              <FileText className="h-5 w-5 text-slate-400 group-hover:text-sky-400 transition-colors" />
-              Download Overview (PDF)
-            </a>
           </div>
         </motion.div>
       </div>
-      
+
       {/* Scroll Indicator */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
       >
         <div className="w-6 h-10 border-2 border-slate-500 rounded-full flex justify-center p-1">
-          <motion.div 
+          <motion.div
             animate={{ y: [0, 12, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
             className="w-1.5 h-1.5 bg-sky-400 rounded-full"
