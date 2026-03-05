@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkRateLimit, getClientIp } from './utils/security.ts';
+import { checkRateLimit, getClientIp } from './utils/security.js';
 import crypto from 'crypto';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {

@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import db from './src/db/index.js';
-import { validateContactRequest, checkRateLimit, getClientIp } from './api/utils/security.ts';
+import { validateContactRequest, checkRateLimit, getClientIp } from './api/utils/security.js';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
